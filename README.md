@@ -6,6 +6,8 @@ This sample will need be publicly accessible to the internet in order for Bandwi
 
 **Unless you are running on `localhost`, you will need to use HTTPS**. Most modern browsers require a secure context when accessing cameras and microphones.
 
+Note that this sample currently works best in Chrome or Firefox!
+
 
 ### Create a Bandwidth Voice API application
 Follow the steps in [How to Create a Voice API Application](https://support.bandwidth.com/hc/en-us/articles/360035060934-How-to-Create-a-Voice-API-Application-V2-) to create your Voice API appliation.
@@ -34,7 +36,7 @@ Add your Bandwidth account settings to `.env`:
 Add your Voice Application settings to `.env`:
 
 * VOICE\_APP\_ID (the Voice Application ID from above)
-* VOICE\_CALLBACK\_URL (the publicly accessible URL you specified as the callback in the Voice Application. It should have `/callback` at the end of the URL)
+* VOICE\_CALLBACK\_URL (the publicly accessible URL you specified as the callback in the Voice Application, **without** `/callback` in the URL)
 
 
 ### Install dependencies and build
