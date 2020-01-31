@@ -28,10 +28,13 @@ class WebRtcAgentManager {
   private agentAvailableHandler?: { (agent: Agent): void };
   private callEndedHandler?: { (callId: string): void };
 
+  private websocketUrl?: string;
+
   constructor() {
     this.bandwidthRtc = new BandwidthRtc();
     this.agents = new Map();
     this.conferences = new Map();
+    this.websocketUrl = process.env.WEBRTC_SERVER_URL;
   }
 
   /**
@@ -41,11 +44,15 @@ class WebRtcAgentManager {
    * @param password Bandwidth password
    */
   async initialize(accountId: string, username: string, password: string) {
+    let options: any = {};
+    if (this.websocketUrl) {
+      options.websocketUrl = this.websocketUrl;
+    }
     await this.bandwidthRtc.connect({
       accountId: accountId,
       username: username,
       password: password
-    });
+    }, options);
     console.log("Bandwidth WebRTC websocket connected");
 
     this.bandwidthRtc.onParticipantJoined(
