@@ -23,7 +23,6 @@ Copy the default configuration files
 
 ```bash
 cp .env.default .env
-cp frontend/.env.default frontend/.env
 ```
 
 Add your Bandwidth account settings to `.env`:
