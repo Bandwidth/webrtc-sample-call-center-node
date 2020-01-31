@@ -45,6 +45,6 @@ npm start
 ```
 
 ### Start your call center
-Browse to [http://localhost:8080](http://localhost:8080) to accept calls into your call center.
+Browse to [http://localhost:3000](http://localhost:3000) to accept calls into your call center.
 
 You should now be able to dial into your phone number and speak to the next available agent!
