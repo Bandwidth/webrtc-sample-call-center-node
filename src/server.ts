@@ -15,6 +15,7 @@ import VoiceCallManager from "./VoiceCallManager";
 const accountId = <string>process.env.ACCOUNT_ID;
 const username = <string>process.env.USERNAME;
 const password = <string>process.env.PASSWORD;
+const deviceWebsocketUrl = <string>process.env.WEBRTC_DEVICE_URL;
 const port = process.env.PORT || 3000;
 const app = express();
 
@@ -128,6 +129,7 @@ app.post("/setStatus", async (req: any, res) => {
     if (req.body.online) {
       console.log(`Agent ${agentId} is coming online`);
       resp = await agentManager.bringAgentOnline(agentId);
+      resp = { websocketUrl: deviceWebsocketUrl, ...resp }
     } else {
       console.log(`Agent ${agentId} is going offline`);
       await agentManager.takeAgentOffline(agentId);

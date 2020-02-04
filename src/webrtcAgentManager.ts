@@ -6,6 +6,8 @@ import BandwidthRtc, {
 
 import { Agent, AgentNotFoundError, AgentOfflineError } from "./types";
 
+const websocketUrl = <string>process.env.WEBRTC_SERVER_URL;
+
 class WebRtcAgentManager {
   /**
    * Bandwidth WebRTC server SDK
@@ -28,13 +30,10 @@ class WebRtcAgentManager {
   private agentAvailableHandler?: { (agent: Agent): void };
   private callEndedHandler?: { (callId: string): void };
 
-  private websocketUrl?: string;
-
   constructor() {
     this.bandwidthRtc = new BandwidthRtc();
     this.agents = new Map();
     this.conferences = new Map();
-    this.websocketUrl = process.env.WEBRTC_SERVER_URL;
   }
 
   /**
@@ -45,8 +44,8 @@ class WebRtcAgentManager {
    */
   async initialize(accountId: string, username: string, password: string) {
     let options: any = {};
-    if (this.websocketUrl) {
-      options.websocketUrl = this.websocketUrl;
+    if (websocketUrl) {
+      options.websocketUrl = websocketUrl;
     }
     await this.bandwidthRtc.connect({
       accountId: accountId,

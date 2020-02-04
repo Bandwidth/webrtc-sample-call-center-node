@@ -40,8 +40,11 @@ const CallControl: React.FC<IProps> = props => {
   const callElement = useRef<HTMLElement>();
   const [remoteStream, setRemoteStream] = useState<RtcStream>();
 
-  const connectToConference = async (conferenceId: string, participantId: string) => {
+  const connectToConference = async (conferenceId: string, participantId: string, websocketUrl: string) => {
     let options: any = {};
+    if (websocketUrl) {
+      options.websocketUrl = websocketUrl;
+    }
     await bandwidthRtc.connect({conferenceId: conferenceId, participantId: participantId}, options);
 
     bandwidthRtc.onSubscribe((stream: RtcStream) => {
@@ -139,7 +142,7 @@ const CallControl: React.FC<IProps> = props => {
       }).then(response => {
         response.json().then((data) => {
           if (props.online) {
-            connectToConference(data.conferenceId, data.participantId);
+            connectToConference(data.conferenceId, data.participantId, data.websocketUrl);
           } else if (bandwidthRtc !== undefined) {
             bandwidthRtc.disconnect();
           }
