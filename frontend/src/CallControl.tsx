@@ -50,7 +50,8 @@ const CallControl: React.FC<IProps> = props => {
     bandwidthRtc.onSubscribe((stream: RtcStream) => {
       handleCallStarted(stream);
     });
-    bandwidthRtc.onUnsubscribe((event: SubscriptionEvent) => {
+  
+    bandwidthRtc.onUnsubscribed((event: SubscriptionEvent) => {
       handleCallEnded(event);
     });
 
