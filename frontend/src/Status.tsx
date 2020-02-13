@@ -24,6 +24,7 @@ const useStyles = makeStyles(theme => ({
 
 type IProps = {
   online: boolean;
+  disabled?: boolean;
   onOnlineChange?: (online: boolean) => void | undefined;
 };
 
@@ -37,6 +38,7 @@ const Status: React.FC<IProps> = props => {
           <Switch
             color="primary"
             value="Online"
+            disabled={props.disabled}
             checked={props.online}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               if (props.onOnlineChange !== undefined) {

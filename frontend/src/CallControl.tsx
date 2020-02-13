@@ -9,13 +9,13 @@ import BandwidthRtc, {
 } from "@bandwidth/webrtc-browser-sdk";
 
 const bandwidthRtc = new BandwidthRtc();
-const backendUrl = '';
+const backendUrl = "";
 
 type IProps = {
   online: boolean;
   onCallActiveChange?: (online: boolean) => void | undefined;
+  onWebsocketConnectedChange?: () => void | undefined;
 };
-
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -40,21 +40,33 @@ const CallControl: React.FC<IProps> = props => {
   const callElement = useRef<HTMLElement>();
   const [remoteStream, setRemoteStream] = useState<RtcStream>();
 
-  const connectToConference = async (conferenceId: string, participantId: string, websocketUrl: string) => {
+  const connectToConference = async (
+    conferenceId: string,
+    participantId: string,
+    websocketUrl: string
+  ) => {
     let options: any = {};
     if (websocketUrl) {
       options.websocketUrl = websocketUrl;
     }
-    await bandwidthRtc.connect({conferenceId: conferenceId, participantId: participantId}, options);
+    await bandwidthRtc.connect(
+      { conferenceId: conferenceId, participantId: participantId },
+      options
+    );
+
+    if (props.onWebsocketConnectedChange) {
+      props.onWebsocketConnectedChange();
+    }
 
     bandwidthRtc.onSubscribe((stream: RtcStream) => {
       handleCallStarted(stream);
     });
-    bandwidthRtc.onUnsubscribe((event: SubscriptionEvent) => {
+
+    bandwidthRtc.onUnsubscribed((event: SubscriptionEvent) => {
       handleCallEnded(event);
     });
 
-    await bandwidthRtc.publish({audio: true});
+    await bandwidthRtc.publish({ audio: true });
   };
 
   const handleCallStarted = (stream: RtcStream) => {
@@ -81,7 +93,7 @@ const CallControl: React.FC<IProps> = props => {
           "Content-Type": "application/json"
         },
         method: "POST",
-        body: JSON.stringify({token: token})
+        body: JSON.stringify({ token: token })
       });
       setCallActive(false);
     }
@@ -125,7 +137,7 @@ const CallControl: React.FC<IProps> = props => {
       },
       body: JSON.stringify({})
     }).then(response => {
-      response.json().then((data) => {
+      response.json().then(data => {
         setToken(data.token);
       });
     });
@@ -140,19 +152,25 @@ const CallControl: React.FC<IProps> = props => {
           "Content-Type": "application/json"
         }
       }).then(response => {
-        response.json().then((data) => {
+        response.json().then(async data => {
           if (props.online) {
-            connectToConference(data.conferenceId, data.participantId, data.websocketUrl);
+            connectToConference(
+              data.conferenceId,
+              data.participantId,
+              data.websocketUrl
+            );
           } else if (bandwidthRtc !== undefined) {
-            bandwidthRtc.disconnect();
+            await bandwidthRtc.disconnect();
+            if (props.onWebsocketConnectedChange) {
+              props.onWebsocketConnectedChange();
+            }
           }
         });
       });
     }
   }, [props.online]);
 
-  return (
-    props.online ?
+  return props.online ? (
     <Box>
       <Paper className={classes.paper}>
         {callActive ? (
@@ -197,16 +215,15 @@ const CallControl: React.FC<IProps> = props => {
             if (
               callElement &&
               remoteStream &&
-              callElement.srcObject !==
-                remoteStream.mediaStream
+              callElement.srcObject !== remoteStream.mediaStream
             ) {
               callElement.srcObject = remoteStream.mediaStream;
             }
           }}
         ></video>
       </Paper>
-    </Box> : null
-  );
+    </Box>
+  ) : null;
 };
 
 export default CallControl;
