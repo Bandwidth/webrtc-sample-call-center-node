@@ -15,10 +15,12 @@ const useStyles = makeStyles(theme =>
 const CallCenter: React.FC = () => {
   const [online, setOnline] = useState(false);
   const [callActive, setCallActive] = useState(false);
+  const [connectionStateChanging, setConnectionStateChanging] = useState(false);
   const classes = useStyles();
 
   const handleOnlineChange = (online: boolean) => {
     console.log(`online: ${online}`);
+    setConnectionStateChanging(true);
     setOnline(online);
   };
 
@@ -31,12 +33,19 @@ const CallCenter: React.FC = () => {
     <Grid container className={classes.root} spacing={4}>
       <Grid container spacing={4} item xs={6}>
         <Grid item xs={12}>
-          <Status online={online} onOnlineChange={handleOnlineChange}></Status>
+          <Status
+            online={online}
+            onOnlineChange={handleOnlineChange}
+            disabled={connectionStateChanging}
+          ></Status>
         </Grid>
         <Grid item xs={12}>
           <CallControl
             online={online}
             onCallActiveChange={handleCallActiveChange}
+            onWebsocketConnectedChange={() => {
+              setConnectionStateChanging(false);
+            }}
           ></CallControl>
         </Grid>
       </Grid>
