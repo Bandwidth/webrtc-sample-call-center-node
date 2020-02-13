@@ -7,6 +7,7 @@ import BandwidthRtc, {
 import { Agent, AgentNotFoundError, AgentOfflineError } from "./types";
 
 const websocketUrl = <string>process.env.WEBRTC_SERVER_URL;
+const sipDestination = <string>process.env.SIP_DESTINATION;
 
 class WebRtcAgentManager {
   /**
@@ -46,6 +47,9 @@ class WebRtcAgentManager {
     let options: any = {};
     if (websocketUrl) {
       options.websocketUrl = websocketUrl;
+    }
+    if (sipDestination) {
+      options.sipDestination = sipDestination;
     }
     await this.bandwidthRtc.connect({
       accountId: accountId,
